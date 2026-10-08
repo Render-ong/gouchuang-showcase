@@ -1,0 +1,211 @@
+// 语音通话全屏层样式：与原生端 components/voice-call/voice-call.wxss 同源
+// 半透明毛玻璃（透出并模糊对话页文字）+ 中央声波条 + 文字区 + 状态文案 + 操作按钮
+
+.vc-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1200;
+  /* rgba 半透明：对话页文字隐约可见；backdrop-filter 模糊（不支持时退化为纯半透明） */
+  background: linear-gradient(180deg, rgba(251, 227, 236, 0.22) 0%, rgba(240, 217, 238, 0.2) 30%, rgba(221, 228, 243, 0.2) 65%, rgba(233, 240, 250, 0.22) 100%);
+  -webkit-backdrop-filter: blur(24rpx);
+  backdrop-filter: blur(24rpx);
+}
+
+/* ─── AI 回复流式大字：柱下方（转写之下），打字机逐字上屏，超出滑动查看。
+     rpx 排布：柱 240~560，转写 580~664，AI 文字 670 起。高度用 top+bottom 自适应屏高。
+     宽度必须显式 630rpx：scroll-view 用 left+right 组合定位在真机上宽度约束失效
+     （原生端两次踩坑定论） ─── */
+.vc-agent-text {
+  position: absolute;
+  left: 60rpx;
+  width: 630rpx;
+  top: 670rpx;
+  bottom: 460rpx;
+}
+
+.vc-agent-inner {
+  width: 630rpx;
+}
+
+.vc-agent-text-content {
+  width: 630rpx;
+  box-sizing: border-box;
+  font-size: 40rpx;
+  color: #3a3550;
+  text-shadow: 0 2rpx 8rpx rgba(255, 255, 255, 0.8);
+  line-height: 1.55;
+  word-break: break-all;
+}
+
+/* 思考话术后的呼吸省略号：表示正在思考 */
+.vc-ellipsis {
+  display: inline-block;
+  animation: vc-ellipsis-blink 1s ease-in-out infinite;
+}
+
+@keyframes vc-ellipsis-blink {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+
+/* ─── 声波条：15 根圆头竖条，静息圆弧轮廓，height/色由 js 驱动；上移腾出下方文字区 ─── */
+.vc-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 400rpx;
+  height: 320rpx;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+}
+
+.vc-wave-bar {
+  width: 16rpx;
+  border-radius: 16rpx;
+  transition: height 0.08s ease-out;
+}
+
+/* ─── 实时转写文本（用户说话中间态，柱下方紧贴；AI 大字区之上） ─── */
+.vc-live-text {
+  position: absolute;
+  left: 80rpx;
+  width: 590rpx;
+  top: 580rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #3a3550;
+  text-shadow: 0 2rpx 8rpx rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* ─── 状态提示 ─── */
+.vc-status {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 340rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.vc-dots {
+  display: flex;
+  gap: 14rpx;
+}
+
+.vc-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: #8d8798;
+  animation: vc-dot-blink 1.2s ease-in-out infinite;
+}
+
+.vc-dot:nth-child(2) { animation-delay: 0.2s; }
+.vc-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes vc-dot-blink {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+.vc-status-text {
+  font-size: 30rpx;
+  color: #3a3550;
+  text-shadow: 0 2rpx 8rpx rgba(255, 255, 255, 0.8);
+}
+
+/* ─── 底部操作按钮（白色圆底 + 图标，挂断红叉） ─── */
+.vc-actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(120rpx + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  gap: 72rpx;
+}
+
+.vc-btn {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(120, 100, 150, 0.14);
+  transition: transform 0.15s ease;
+}
+
+.vc-btn:active {
+  transform: scale(0.94);
+}
+
+.vc-btn-icon {
+  font-size: 58rpx;
+  color: #1a1a1a;
+}
+
+/* 静音态：图标变灰 + CSS 斜线（iconfont 无 mute 图标，不引入新资源） */
+.vc-btn-muted .vc-btn-icon {
+  color: #b0adc0;
+}
+
+/* 打断按钮：常驻底部。播报中为琥珀色高亮（可点），静默时置灰 */
+.vc-btn-interrupt {
+  background: rgba(255, 214, 130, 0.92);
+}
+
+.vc-btn-interrupt .vc-btn-icon {
+  color: #6b4c00;
+}
+
+.vc-btn-interrupt-off {
+  background: #f2f0f6;
+}
+
+.vc-btn-interrupt-off .vc-btn-icon {
+  color: #c8c4d4;
+}
+
+.vc-btn-muted {
+  position: relative;
+}
+
+.vc-btn-muted::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 90rpx;
+  height: 6rpx;
+  border-radius: 6rpx;
+  background: #b0adc0;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.vc-icon-hangup {
+  color: #fa5151;
+}
+
+/* 底部安全区占位（视觉垫层，防止全面屏按钮贴边） */
+.vc-safe-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: env(safe-area-inset-bottom);
+}

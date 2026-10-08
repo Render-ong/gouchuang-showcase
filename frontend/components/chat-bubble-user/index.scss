@@ -1,0 +1,32 @@
+.bubble-user {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 12rpx 32rpx;
+}
+
+.bubble-user-content {
+  background-color: #2A3038;
+  color: #ffffff;
+  padding: 24rpx 32rpx;
+  border-radius: 32rpx 32rpx 8rpx 32rpx;
+  max-width: 85%;
+  font-size: 30rpx;
+  line-height: 1.5;
+  box-shadow: var(--shadow-sm);
+}
+
+.bubble-text {
+  word-break: break-word;
+  /* ponytail: Android 兜底，与 AI 侧 text 一致 */
+  -webkit-user-select: text;
+}
+
+/* 拍照看效果：用户窗图（深色气泡内圆角展示） */
+.bubble-image {
+  width: 100%;
+  max-width: 420rpx;
+  border-radius: 20rpx;
+  margin-bottom: 12rpx;
+  display: block;
+}

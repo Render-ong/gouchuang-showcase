@@ -1,0 +1,13 @@
+# 本仓库为「项目展示仓库」，采用白名单模式：
+# 默认忽略一切内容，仅下方显式放行的文件/目录会被上传，防止本地敏感材料误传。
+
+*
+
+# ===== 允许上传 =====
+!README.md
+!LICENSE
+!.gitignore
+!screenshots/
+!screenshots/**
+!frontend/
+!frontend/**

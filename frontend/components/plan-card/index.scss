@@ -1,0 +1,158 @@
+.plan-card {
+  background-color: var(--bg);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  border: 2rpx solid var(--border-light);
+  width: 100%;
+}
+
+.plan-card-compact {
+  min-width: 480rpx;
+  width: 480rpx;
+  flex-shrink: 0;
+}
+
+.plan-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.plan-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  line-height: 1.3;
+}
+
+.status-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 9999rpx;
+  flex-shrink: 0;
+}
+
+.status-text {
+  font-size: 20rpx;
+  font-weight: 500;
+}
+
+.status-draft {
+  background-color: var(--bg-tertiary);
+}
+
+.status-draft .status-text {
+  color: var(--text-secondary);
+}
+
+.status-submitted {
+  background-color: var(--silver-bg);
+}
+
+.status-submitted .status-text {
+  color: var(--text-secondary);
+}
+
+.status-matched {
+  background-color: var(--success-bg);
+}
+
+.status-matched .status-text {
+  color: var(--success);
+}
+
+.plan-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 26rpx;
+}
+
+.info-label {
+  color: var(--text-secondary);
+}
+
+.info-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.info-row-price {
+  margin-top: 8rpx;
+}
+
+.info-price {
+  color: var(--rose);
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.plan-actions {
+  display: flex;
+  gap: 16rpx;
+  padding-top: 24rpx;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18rpx 0;
+  border-radius: 9999rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.action-btn-ghost {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  border: 2rpx solid var(--border-light);
+  box-shadow: var(--btn-shadow);
+}
+
+.action-btn-ghost:active {
+  background-color: var(--bg-tertiary);
+  box-shadow: var(--btn-shadow-active);
+  transform: translateY(1rpx);
+}
+
+.action-btn-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+  box-shadow: var(--btn-shadow);
+}
+
+.action-btn-primary:active {
+  background-color: var(--primary-hover);
+  box-shadow: var(--btn-shadow-active);
+  transform: translateY(1rpx);
+}
+
+/* 删除按钮：固定窄宽度（主按钮保持 flex:1 等分），rose 色文字提示危险操作 */
+.action-btn-danger {
+  flex: 0 0 auto;
+  padding: 18rpx 32rpx;
+  background-color: var(--bg);
+  color: var(--rose);
+  border: 2rpx solid var(--border-light);
+  box-shadow: var(--btn-shadow);
+}
+
+.action-btn-danger:active {
+  background-color: var(--bg-tertiary);
+  box-shadow: var(--btn-shadow-active);
+  transform: translateY(1rpx);
+}

@@ -1,0 +1,22 @@
+.rating-star {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.star {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.star .adwicon-star {
+  font-size: 48rpx;
+  color: var(--text-tertiary);
+}
+
+.star-active .adwicon-star {
+  color: var(--warning);
+}

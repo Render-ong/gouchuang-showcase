@@ -1,0 +1,326 @@
+.detail-page {
+  /* height 而非 min-height：iOS 白屏修复，同 product-detail */
+  height: 100vh;
+  height: 100dvh;
+  background-color: var(--bg-tertiary);
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-scroll {
+  flex: 1;
+  overflow: hidden;
+}
+
+.detail-card {
+  margin: 24rpx;
+  background-color: var(--bg);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  border: 2rpx solid var(--border-light);
+}
+
+.detail-header {
+  display: flex;
+  gap: 24rpx;
+  align-items: flex-start;
+}
+
+.detail-logo {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 24rpx;
+  background-color: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 24rpx;
+}
+
+.detail-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex-wrap: wrap;
+}
+
+.detail-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.featured-badge {
+  font-size: 20rpx;
+  color: #ffffff;
+  background-color: var(--primary);
+  padding: 4rpx 12rpx;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  flex-wrap: wrap;
+}
+
+.meta-rating,
+.meta-region {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.meta-star {
+  font-size: 28rpx;
+  color: var(--warning);
+}
+
+.meta-rating-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--warning);
+}
+
+.meta-review {
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+  margin-left: 4rpx;
+}
+
+.meta-loc {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.meta-region-text {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+/* 核心指标网格 */
+.metrics-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.metric {
+  flex: 1;
+  min-width: 140rpx;
+  background-color: var(--bg-tertiary);
+  border-radius: 20rpx;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.metric-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 2rpx;
+}
+
+.metric-value {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.metric-unit {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+}
+
+.metric-value-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.metric-label {
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+}
+
+/* 简介/地址文本 */
+.section-text {
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* 地址行：整行可点，右侧「导航」引导 */
+.address-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.address-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.address-nav {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  flex-shrink: 0;
+  color: var(--primary);
+}
+
+.address-nav-icon,
+.address-nav-text {
+  font-size: 24rpx;
+}
+
+.address-row-hover {
+  opacity: 0.7;
+}
+
+.detail-footer {
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+  background-color: var(--bg);
+  border-top: 2rpx solid var(--border-light);
+}
+
+.contact-btn {
+  width: 100%;
+  padding: 24rpx 0;
+  border-radius: var(--radius-full);
+  background-color: var(--primary);
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.contact-btn:active {
+  opacity: 0.85;
+}
+
+.contact-icon {
+  font-size: 30rpx;
+}
+
+/* 用户评价区块（默认折叠，点击头部展开） */
+.review-block {
+  border-top: 2rpx solid var(--border-light);
+  padding-top: var(--space-3);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 8rpx 0;
+}
+
+.review-header-hover {
+  opacity: 0.7;
+}
+
+.review-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.review-meta {
+  flex: 1;
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+}
+
+.review-arrow {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-top: 8rpx;
+}
+
+.review-item {
+  background-color: var(--bg-tertiary);
+  border-radius: 20rpx;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.review-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.review-stars {
+  font-size: 24rpx;
+  color: #f59e0b;
+  letter-spacing: 4rpx;
+}
+
+.review-date {
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+}
+
+.review-content {
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.review-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.review-img {
+  width: 152rpx;
+  height: 152rpx;
+  border-radius: 12rpx;
+  background-color: var(--bg);
+}

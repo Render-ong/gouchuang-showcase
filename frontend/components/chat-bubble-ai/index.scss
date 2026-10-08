@@ -1,0 +1,568 @@
+.bubble-ai {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  padding: 16rpx 32rpx;
+  gap: 24rpx;
+}
+
+/* 头像：无底色大图标风格（robot 字形即头像，不再包深色圆底） */
+.ai-avatar {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+.ai-avatar-icon {
+  font-size: 56rpx;
+  color: var(--text-primary);
+}
+
+.bubble-ai-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  min-width: 0;
+  padding-top: 4rpx;
+}
+
+/* Doubao 风格：AI 回复无气泡背景，直接在页面上渲染，靠排版层次呈现结构 */
+.bubble-ai-text {
+  color: var(--text-primary);
+  font-size: 28rpx;
+  line-height: 1.65;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 流式输出时的纯文本样式（不触发 markdown 解析，防卡死） */
+.bubble-ai-text-raw {
+  font-size: 28rpx;
+  line-height: 1.65;
+  color: var(--text-primary);
+  max-width: 100%;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* 操作按钮组：复制 / 分享 / 收藏 */
+.bubble-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4rpx;
+}
+
+.action-btn {
+  /* ponytail: 相对定位作为文字 tooltip 锚点——平时只显图标，按住时文字浮在图标上方（同 mp chat-bubble-ai.wxss） */
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 10rpx 16rpx;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+  line-height: 1;
+}
+
+/* 重置 button 默认样式（分享按钮是 button 元素） */
+button.action-btn {
+  padding: 10rpx 16rpx;
+  background-color: transparent;
+  border: none;
+  margin: 0;
+}
+
+button.action-btn::after {
+  border: none;
+}
+
+.action-btn-hover {
+  background-color: var(--bg-tertiary);
+}
+
+.action-icon {
+  font-size: 26rpx;
+  line-height: 1;
+}
+
+/* 文字 tooltip：平时隐藏只显图标，按住(点击)按钮时经 .action-btn-hover 显示在图标上方，不占用图标行
+   ponytail: 与 mp chat-bubble-ai.wxss 完全一致——抖音端此前文字常显是移植时漏了这段 */
+.action-btn-hover .action-label {
+  display: block;
+}
+
+.action-label {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 12rpx);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  white-space: nowrap;
+  padding: 6rpx 14rpx;
+  border-radius: var(--radius-sm, 8rpx);
+  background-color: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-size: 20rpx;
+  line-height: 1.4;
+}
+
+.action-icon.is-favorited {
+  color: var(--warning);
+}
+
+/* 左右分组：左组（复制/分享）右组（收藏/赞/踩），两端对齐（同 mp chat-bubble-ai.wxss） */
+.actions-group {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+/* 左组无间距，配合分享按钮去掉左内边距，两图标紧贴 */
+/* ponytail: 不用负 margin——在小程序 button 上不可靠（之前 -16rpx 实测无效） */
+.actions-group-left {
+  gap: 0;
+}
+
+/* 赞（正面）激活用成功绿；踩（负面）激活用错误红 */
+.action-icon.is-thumb-active {
+  color: var(--success);
+}
+
+.thumb-down .action-icon.is-thumb-active {
+  color: var(--error);
+}
+
+/* ─── 思考过程流 ─── */
+.thinking-stream {
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+  color: var(--text-tertiary);
+  font-size: 22rpx;
+  line-height: 1.45;
+  max-width: 520rpx;
+  min-height: 40rpx;
+}
+
+.thinking-stream.collapsed {
+  align-items: center;
+}
+
+.thinking-stream-header {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 4rpx 0;
+  flex-shrink: 0;
+}
+
+.thinking-stream-dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background-color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: background-color 0.3s ease;
+}
+
+.thinking-stream-dot.pulse {
+  background-color: var(--primary);
+  box-shadow: 0 0 0 4rpx var(--primary-bg);
+  animation: thinking-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes thinking-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.thinking-stream-title {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  font-size: 22rpx;
+  letter-spacing: 0.5rpx;
+}
+
+.thinking-stream-count {
+  flex-shrink: 0;
+  font-size: 18rpx;
+  color: var(--text-tertiary);
+  background-color: var(--bg-tertiary);
+  padding: 2rpx 10rpx;
+  border-radius: var(--radius-full);
+  line-height: 1.4;
+}
+
+.thinking-stream-chevron {
+  flex-shrink: 0;
+  font-size: 18rpx;
+  color: var(--silver);
+  margin-left: auto;
+}
+
+.thinking-stream-body {
+  flex: 1;
+  min-width: 0;
+  margin-top: 2rpx;
+  padding-left: 4rpx;
+}
+
+.thinking-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  padding: 6rpx 0;
+  position: relative;
+}
+
+.thinking-step-item::before {
+  content: '';
+  position: absolute;
+  left: 5rpx;
+  top: 22rpx;
+  bottom: -6rpx;
+  width: 2rpx;
+  background-color: var(--border-light);
+}
+
+.thinking-step-item:last-child::before {
+  display: none;
+}
+
+.thinking-step-marker {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 6rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.thinking-step-check {
+  font-size: 16rpx;
+  color: var(--text-tertiary);
+  line-height: 1;
+}
+
+.thinking-step-spinner {
+  width: 10rpx;
+  height: 10rpx;
+  border: 2rpx solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: thinking-spin 0.7s linear infinite;
+}
+
+@keyframes thinking-spin {
+  to { transform: rotate(360deg); }
+}
+
+.thinking-step-item.running .thinking-step-marker {
+  background-color: var(--primary);
+  box-shadow: 0 0 0 4rpx var(--primary-bg);
+  animation: thinking-node-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes thinking-node-pulse {
+  0%, 100% { box-shadow: 0 0 0 4rpx var(--primary-bg); }
+  50% { box-shadow: 0 0 0 7rpx rgba(96, 122, 148, 0.06); }
+}
+
+.thinking-step-item.running .thinking-step-spinner {
+  display: none;
+}
+
+.thinking-step-item.done .thinking-step-marker {
+  background-color: var(--bg-secondary);
+  border: 2rpx solid var(--text-tertiary);
+}
+
+.thinking-step-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rpx;
+  padding-bottom: 4rpx;
+}
+
+.thinking-step-item.running .thinking-step-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.thinking-step-item.done .thinking-step-label {
+  color: var(--text-tertiary);
+}
+
+.thinking-step-label {
+  font-size: 22rpx;
+  line-height: 1.4;
+}
+
+.thinking-step-detail {
+  color: var(--text-tertiary);
+  font-size: 20rpx;
+  line-height: 1.5;
+  opacity: 0.8;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.thinking-stream.collapsed .thinking-stream-dot {
+  background-color: var(--text-tertiary);
+  animation: none;
+  box-shadow: none;
+}
+
+.thinking-stream.collapsed .thinking-stream-header {
+  opacity: 0.7;
+}
+
+/* ─── 活动卡片：回复文本 {{activity:id}} 占位符解析结果，done 后渲染在正文下方 ─── */
+.activity-cards {
+  margin-top: 12rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.activity-cards .activity-card {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ─── 可采纳建议勾选区 ───
+ * 卡片化样式，与思考过程流区分：浅灰底 + 圆角 + 内边距
+ * 勾选态：primary 色描边 + primary-bg 浅色底
+ */
+.suggestions-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  padding: 20rpx 24rpx;
+  margin-top: 8rpx;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  max-width: 100%;
+}
+
+.suggestions-header {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.suggestions-icon {
+  font-size: 24rpx;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.suggestions-title {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+/* 单条建议 chip：未勾选浅色底 + 描边；勾选 primary 色高亮 */
+.suggestion-chip {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 14rpx 16rpx;
+  background-color: var(--bg-secondary);
+  border: 2rpx solid var(--border-light);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.suggestion-chip-hover {
+  background-color: var(--border-light);
+}
+
+.suggestion-chip.checked {
+  background-color: var(--primary-bg);
+  border-color: var(--primary);
+}
+
+.suggestion-checkbox {
+  width: 28rpx;
+  height: 28rpx;
+  border: 2rpx solid var(--border);
+  border-radius: 6rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: var(--bg-secondary);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.suggestion-chip.checked .suggestion-checkbox {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.suggestion-check-icon {
+  font-size: 18rpx;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.suggestion-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 24rpx;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.suggestion-chip.checked .suggestion-text {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.suggestions-hint {
+  margin-top: 4rpx;
+}
+
+.suggestions-hint-text {
+  font-size: 20rpx;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  letter-spacing: 0.3rpx;
+}
+
+.suggestions-hint-text.suggestions-hint-active {
+  color: var(--primary);
+}
+
+/* ponytail: 需求提示条——浅琥珀底 + 琥珀橙左竖线强调 */
+.needs-tip {
+  background: #fffbeb;
+  border-left: 6rpx solid #f59e0b;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin: 16rpx 0;
+  max-width: 100%;
+}
+.needs-tip-text {
+  color: #92400e;
+  font-size: 26rpx;
+  line-height: 1.6;
+  word-break: break-word;
+  /* ponytail: Android 兜底，提示条文本可复制 */
+  -webkit-user-select: text;
+}
+
+/* ponytail: 方案引导条——浅绿底 + 绿色左竖线强调 */
+.plan-tip {
+  background: #f0fdf4;
+  border-left: 6rpx solid #22c55e;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin: 16rpx 0;
+  max-width: 100%;
+}
+.plan-tip-text {
+  color: #166534;
+  font-size: 26rpx;
+  line-height: 1.6;
+  word-break: break-word;
+  /* ponytail: Android 兜底，提示条文本可复制 */
+  -webkit-user-select: text;
+}
+.merchant-tip {
+  background: #f3e8ff;
+  border-left: 6rpx solid #a855f7;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin: 16rpx 0;
+  max-width: 100%;
+}
+.merchant-tip-text {
+  color: #7e22ce;
+  font-size: 26rpx;
+  line-height: 1.6;
+  word-break: break-word;
+  /* ponytail: Android 兜底，提示条文本可复制 */
+  -webkit-user-select: text;
+}
+
+.follow-ups-box {
+  margin-top: 12rpx;
+}
+
+.follow-ups-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+/* ponytail: --bg-tertiary(#EEF2F6) 与页面背景 --bg-secondary(#F7F9FB) 区分；
+   var(--radius-md)=12rpx 圆角长方形（非胶囊），与 suggestions-box 视觉一致 */
+.follow-up-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 14rpx 20rpx;
+  background-color: var(--bg-tertiary);
+  border: 2rpx solid var(--border-light);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.follow-up-chip-hover {
+  background-color: var(--primary-bg);
+  border-color: var(--primary);
+}
+
+.follow-up-text {
+  font-size: 24rpx;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.follow-up-chip-hover .follow-up-text {
+  color: var(--primary);
+}
+
+/* 发送图标：点击即发送的语义暗示（替代原 › 文本箭头） */
+.follow-up-icon {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.follow-up-chip-hover .follow-up-icon {
+  color: var(--primary);
+}

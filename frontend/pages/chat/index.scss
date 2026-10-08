@@ -1,0 +1,453 @@
+.chat-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* ponytail: H5 端动态视口高度，不包含地址栏；小程序端忽略此行 */
+  overflow: hidden;
+  background-color: var(--drawer-bg);
+}
+
+/* ─── 抖音端：自定义导航栏权限未通过期间，对话管理入口左上角悬浮球 ───
+   白底圆钮 + 阴影（与 slots-fab 同风格）；权限通过后随渲染条件一起消失 */
+.menu-fab {
+  position: absolute;
+  left: 24rpx;
+  top: 16rpx;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background-color: var(--bg, #ffffff);
+  border: 2rpx solid var(--border-light, #e8eef3);
+  box-shadow: var(--btn-shadow, 0 4rpx 16rpx rgba(0, 0, 0, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.menu-fab-icon {
+  font-size: 36rpx;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+/* ─── 需求清单入口：左下角悬浮按钮 ─── */
+/* ponytail: 原生 mp 80rpx/40rpx；抖音端反馈太小 → 放大到 96rpx/48rpx，
+   left 24→40rpx 右移一点，避免贴边难点按 */
+.slots-fab {
+  position: absolute;
+  left: 40rpx;  bottom: calc(200rpx + env(safe-area-inset-bottom));
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background-color: var(--bg, #ffffff);
+  border: 2rpx solid var(--border-light, #e8eef3);
+  box-shadow: var(--btn-shadow, 0 4rpx 16rpx rgba(0, 0, 0, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.slots-fab:active {
+  transform: scale(0.92);
+  box-shadow: var(--btn-shadow-active, 0 2rpx 8rpx rgba(0, 0, 0, 0.12));
+}
+
+.slots-fab-icon {
+  font-size: 48rpx;
+  color: var(--text-primary, #2d3742);
+}
+
+.chat-main {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* ponytail: H5 端动态视口高度，不包含地址栏；小程序端忽略此行 */
+  background-color: var(--bg-secondary);
+  transform: translateX(0);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.35s ease, box-shadow 0.35s ease;
+  overflow: hidden;
+}
+
+.drawer-open .chat-main {
+  transform: translateX(80%) scale(0.97);
+  border-radius: 36rpx 0 0 36rpx;
+  box-shadow: -12rpx 0 32rpx rgba(0, 0, 0, 0.08);
+}
+
+.main-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.conversation-drawer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 80%;
+  height: 100%;
+  z-index: 1;
+}
+
+.chat-scroll {
+  flex: 1;
+  overflow: hidden;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 64rpx;
+  margin-top: -80rpx;
+}
+
+/* 空状态：抽屉展开时去掉负边距并加大顶部留白，图标/按钮整体下移不被抽屉遮挡 */
+.empty-state.drawer-open {
+  margin-top: 0;
+  padding-top: 64rpx;
+}
+
+.brand-logo {
+  position: relative;
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 48rpx;
+  background-color: var(--bg);
+  border: 2rpx solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 48rpx;
+  box-shadow: var(--btn-shadow);
+}
+
+.brand-icon {
+  font-size: 64rpx;
+  color: var(--primary);
+}
+
+/* ─── 首页活动轮播抽屉（空状态时显示，顶部贴导航栏，左右贴屏幕边） ─── */
+.activity-drawer {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--drawer-bg);
+  border-radius: 0 0 32rpx 32rpx;
+  transition: height 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  flex-shrink: 0;
+  /* 允许内部 swiper 横向滚动不被拦截 */
+  touch-action: pan-y;
+}
+
+/* 展开高度跟随轮播实际模式（modechange 事件驱动）：
+   banner 纯图 422（16:9）；card 图+文 542（封面 422 + 文字栏 120），避免裁掉卡片文字 */
+.activity-drawer.expanded {
+  height: 422rpx;
+}
+
+.activity-drawer.expanded.expanded-card {
+  height: 542rpx;
+}
+
+.activity-drawer.collapsed {
+  height: 0;
+}
+
+/* 首页活动轮播贴边展示（Taro React 组件无 class 根节点透传，用容器选择器覆盖） */
+.activity-drawer .activity-swiper {
+  border-radius: 0;
+}
+
+.activity-drawer .activity-card {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.activity-drawer .activity-banner {
+  border-radius: 0;
+}
+
+/* 角标：图标右下角 */
+.brand-logo-badge {
+  position: absolute;
+  right: -16rpx;
+  bottom: -12rpx;
+  background-color: var(--primary);
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 500;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  white-space: nowrap;
+  box-shadow: 0 2rpx 8rpx rgba(96, 122, 148, 0.3);
+}
+
+.empty-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 64rpx;
+}
+
+.quick-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24rpx;
+  margin-bottom: 48rpx;
+}
+
+.quick-pill {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 20rpx 32rpx;
+  background-color: var(--bg);
+  border-radius: 9999rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+  box-shadow: var(--btn-shadow);
+  border: 2rpx solid var(--border-light);
+}
+
+.quick-pill:active {
+  background-color: var(--bg-tertiary);
+  box-shadow: var(--btn-shadow-active);
+  transform: translateY(1rpx);
+}
+
+.pill-icon {
+  font-size: 28rpx;
+  color: var(--primary-light);
+}
+
+.empty-hint {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.8;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding-bottom: 32rpx;
+}
+
+.plan-scroll {
+  width: 100%;
+  margin-top: 16rpx;
+}
+
+.plan-list {
+  display: flex;
+  gap: 24rpx;
+  padding: 8rpx 0 16rpx 0;
+  white-space: nowrap; /* ponytail: 兜底，防止抖音/支付宝 flex 失效时子元素换行 */
+}
+
+/* ponytail: 覆盖 product-card 的 width:100%，横向滚动场景用 min-width(440rpx) 撑开 */
+.plan-list .product-card {
+  width: 440rpx;
+  flex-shrink: 0;
+}
+
+.merchant-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-top: 16rpx;
+}
+
+.bottom-anchor {
+  height: 1px;
+}
+
+/* ─── 流式打字光标 ─── */
+.typing-cursor {
+  display: inline-block;
+  width: 4rpx;
+  height: 28rpx;
+  margin-left: 4rpx;
+  background-color: var(--primary);
+  vertical-align: middle;
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  to { visibility: hidden; }
+}
+
+/* ─── 追问 pills ─── */
+.follow-up-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.follow-up-pill {
+  padding: 12rpx 24rpx;
+  background-color: var(--bg);
+  border: 2rpx solid var(--primary-light);
+  border-radius: 9999rpx;
+  font-size: 24rpx;
+  color: var(--primary);
+}
+
+.follow-up-pill:active {
+  background-color: var(--primary-bg);
+}
+
+/* 分享卡片弹层：接收者打开分享链接时展示分享者转发的那条 AI 回复 */
+.share-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+}
+.share-card {
+  width: 100%;
+  max-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 28rpx 32rpx calc(24rpx + env(safe-area-inset-bottom));
+}
+.share-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+.share-card-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.share-card-close {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+}
+.share-close-icon {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+}
+.share-card-body {
+  flex: 1;
+  min-height: 0;
+  max-height: 56vh;
+  padding: 24rpx 28rpx;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+.share-card-footer {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* ─── 拍照看效果：AI 效果图消息 ─── */
+.preview-result-card {
+  margin-top: 16rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.preview-result-img {
+  display: block;
+  width: 100%;
+  max-width: 480rpx;
+  border-radius: 20rpx;
+}
+
+/* 效果图保存行：左侧保留期提示 + 右侧编辑/保存按钮 */
+.preview-save-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 480rpx;
+  padding: 12rpx 4rpx 0;
+}
+
+.preview-save-hint {
+  font-size: 22rpx;
+  color: var(--text-tertiary, #98a0ab);
+}
+
+.preview-save-btn {
+  padding: 10rpx 24rpx;
+  border-radius: 26rpx;
+  border: 1rpx solid var(--primary, #2b6cb0);
+  color: var(--primary, #2b6cb0);
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.preview-btn-icon {
+  font-size: 28rpx;
+}
+
+/* 失败/超时效果图的重试行 */
+.preview-failed-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12rpx;
+}
+
+.preview-retry-btn {
+  padding: 10rpx 24rpx;
+  border-radius: 26rpx;
+  background: var(--primary, #2b6cb0);
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.preview-generating {
+  margin-top: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.preview-spinner {
+  width: 28rpx;
+  height: 28rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.25);
+  border-top-color: #4a90d9;
+  border-radius: 50%;
+  animation: preview-spin 0.9s linear infinite;
+}
+
+@keyframes preview-spin {
+  to { transform: rotate(360deg); }
+}
+
+.preview-generating-text {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}

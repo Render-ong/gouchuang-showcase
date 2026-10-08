@@ -1,0 +1,221 @@
+/* 悬浮输入栏：bar 本体透明（透出对话页背景色），白色圆角输入容器 + 阴影浮在页面上 */
+.input-bar {
+  background: transparent;
+  padding: 12rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+}
+
+/* ─── 抖音端：输入栏下方居中灰字提示 ───
+   位于输入容器之下、安全区留白（.input-bar 的 padding-bottom）之上 */
+.input-subnote {
+  margin-top: 12rpx;
+  text-align: center;
+  color: var(--text-tertiary, #8A99A8);
+  font-size: 22rpx;
+  line-height: 1.4;
+}
+
+/* ─── 拍照看效果按钮（输入栏上方白色胶囊 + 阴影悬浮） ─── */
+.camera-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.camera-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  height: 60rpx;
+  padding: 0 24rpx;
+  border-radius: 32rpx;
+  background-color: #ffffff;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.15s ease;
+}
+
+.camera-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+/* sending 期间禁用态：视觉弱化（事件由页面层拦截） */
+.camera-btn-off {
+  opacity: 0.5;
+}
+
+.camera-icon {
+  font-size: 28rpx;
+  color: var(--text-primary);
+}
+
+.camera-text {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+/* 待发送窗图缩略图（拍照看效果流程）：上传中遮罩 + 可移除 */
+.pending-image-box {
+  position: relative;
+  width: 132rpx;
+  height: 132rpx;
+  margin: 4rpx 4rpx 12rpx;
+}
+
+.pending-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 16rpx;
+  background-color: var(--bg-tertiary);
+}
+
+.pending-image-mask {
+  position: absolute;
+  inset: 0;
+  border-radius: 16rpx;
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pending-image-fail {
+  background-color: rgba(200, 48, 48, 0.6);
+}
+
+.pending-image-remove {
+  position: absolute;
+  top: -12rpx;
+  right: -12rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pending-image-remove-icon {
+  font-size: 26rpx;
+  color: #ffffff;
+}
+
+/* 白色圆角输入容器 + 阴影悬浮；column 布局：待发送窗图叠在输入行上方（与微信端一致） */
+.input-wrap {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 44rpx;
+  padding: 12rpx;
+  box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.15s ease;
+}
+
+.input-wrap:focus-within {
+  box-shadow: 0 8rpx 28rpx rgba(0, 0, 0, 0.12);
+}
+
+.input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16rpx;
+}
+
+.input-textarea {
+  flex: 1;
+  min-height: 72rpx;
+  max-height: 200rpx;
+  padding: 16rpx 20rpx;
+  font-size: 30rpx;
+  line-height: 1.4;
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.input-placeholder {
+  color: var(--text-tertiary);
+}
+
+.action-box {
+  position: relative;
+  width: 72rpx;
+  height: 72rpx;
+  flex-shrink: 0;
+}
+
+.send-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--primary);
+  border: 2rpx solid var(--primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--btn-shadow);
+  z-index: 1;
+  transition: all 0.15s ease;
+}
+
+.send-overlay:active {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  box-shadow: var(--btn-shadow-active);
+  transform: translateY(1rpx);
+}
+
+/* 无文字时发送按钮灰态：不可点击的视觉暗示（handleSubmit 空文本会拦截） */
+.send-overlay.send-disabled {
+  background-color: var(--text-tertiary);
+  border-color: var(--text-tertiary);
+  box-shadow: none;
+}
+
+.send-overlay.send-disabled:active {
+  background-color: var(--text-tertiary);
+  border-color: var(--text-tertiary);
+  transform: none;
+}
+
+.send-icon {
+  font-size: 36rpx;
+  color: inherit;
+  line-height: 1;
+}
+
+/* ─── 停止生成按钮 ─── */
+.stop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--text-secondary);
+  border: 2rpx solid var(--text-secondary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--btn-shadow);
+  z-index: 1;
+  transition: all 0.15s ease;
+}
+
+.stop-overlay:active {
+  transform: translateY(1rpx);
+}
+
+.stop-icon-block {
+  width: 24rpx;
+  height: 24rpx;
+  background-color: #ffffff;
+  border-radius: 4rpx;
+}

@@ -1,0 +1,339 @@
+/* KaTeX 布局样式（vendor 副本，已删掉全部 @font-face——WXSS 不支持 woff/woff2，
+   见 src/styles/katex.scss 头部说明）。必须 import 进本组件：
+   官方 tip 明确「自定义组件中的 rich-text，仅自定义组件的样式对 class 生效」。 */
+@import "../../styles/katex.scss";
+
+.md-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  font-size: 28rpx;
+  line-height: 1.65;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.md-h {
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+  margin-top: 4rpx;
+}
+
+.md-h1 {
+  font-size: 36rpx;
+  margin-top: 20rpx;
+  padding-bottom: 8rpx;
+  border-bottom: 2rpx solid var(--border-light);
+}
+
+.md-h2 {
+  font-size: 32rpx;
+  margin-top: 16rpx;
+  padding-bottom: 6rpx;
+  border-bottom: 2rpx solid var(--border-light);
+}
+
+.md-h3 {
+  font-size: 30rpx;
+  margin-top: 12rpx;
+}
+
+.md-h4 {
+  font-size: 28rpx;
+  margin-top: 8rpx;
+}
+
+.md-h5 {
+  font-size: 26rpx;
+}
+
+.md-h6 {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.md-p {
+  font-size: 28rpx;
+  line-height: 1.65;
+  color: var(--text-primary);
+}
+
+.md-bold {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.md-italic {
+  font-style: italic;
+}
+
+.md-code-inline {
+  font-family: SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 26rpx;
+  background-color: var(--bg-tertiary);
+  color: var(--rose);
+  padding: 2rpx 8rpx;
+  border-radius: 6rpx;
+}
+
+.md-link {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.md-cite {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  margin: 0 2rpx;
+}
+
+/* ─── 公式 ───
+ * 两条渲染路径：
+ *   1) KaTeX 成功（html 非空）→ RichText 承载，样式来自顶部 @import 的 katex.scss
+ *   2) 失败 / 含 svg → Unicode 近似文本（见 utils/latex.ts），衬线字体让 _ / ^ 更易辨认
+ */
+.md-math {
+  font-family: "Times New Roman", Georgia, serif;
+  font-size: 27rpx;
+  letter-spacing: 0.5rpx;
+  color: var(--text-primary);
+}
+
+/* 行内公式：inline-block 参与文字流，基线对齐交给 KaTeX 内部的 strut 撑高。
+ * 字号换算：katex.scss 里 .katex{font:normal 1.21em …} 会再乘 1.21，
+ * 故这里的 rpx 是「基准值」——23rpx × 1.21 ≈ 28rpx，与正文 28rpx 持平。 */
+.md-math-rich {
+  display: inline-block;
+  font-size: 23rpx;
+}
+
+/* 块级公式（$$...$$ / \[...\] 独占一行）：整块可横向拖动
+ * scroll-view 兜住超宽公式（长分式分子分母、多行 array 对齐），不再被屏幕裁掉；
+ * 公式比屏窄时居中，超宽时左对齐可拖动（居中规则见 .md-math-block）。 */
+.md-math-scroll {
+  width: 100%;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 公式本体收缩到实际宽度：装得下时 margin:auto 居中，超宽时 auto 归零 → 左对齐、右侧可拖动。
+ * 不能用 text-align:center 居中——超宽时居中会把内容推到负偏移（左侧超出容器），
+ * 而滚动容器拖不到负偏移区，公式头部会被永久裁掉。 */
+.md-math-block {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 16rpx 0;
+}
+
+.md-math-rich-display {
+  font-size: 24rpx;   /* × 1.21 ≈ 29rpx，略大于正文，兼顾可读与占宽 */
+  /* KaTeX 自带 .katex-display{margin:1em 0} 会撑出双倍行距，这里压掉 */
+  margin: 0;
+}
+
+/* 收缩到公式宽度：超宽时外层 scroll-view 才有可拖动的余量（默认 display:block 恒等于屏宽） */
+.md-math-rich-display .katex-display {
+  display: inline-block;
+  margin: 0;
+}
+
+/* \tag 编号：KaTeX 用 .tag{position:absolute;right:0} 贴到 .katex-html 右缘，
+ * 而上面把容器收缩到了公式宽度 → 两者右缘重合，编号压在公式上（实测 A.0.2-1 压住 d/λ）。
+ * 给 .katex-html 留出右内边距，编号落回空白区。仅带编号的公式加（见 markdown.ts _hasTag）。 */
+.md-math-tagged .katex-html {
+  padding-right: 4.5em;
+}
+
+.md-math-display {
+  font-size: 27rpx;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.md-blockquote {
+  position: relative;
+  padding: 12rpx 20rpx;
+  background-color: var(--primary-bg);
+  border-left: 6rpx solid var(--primary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 26rpx;
+  line-height: 1.55;
+}
+
+.md-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding-left: 4rpx;
+}
+
+.md-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  line-height: 1.6;
+}
+
+.md-list-marker {
+  flex-shrink: 0;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 28rpx;
+  min-width: 28rpx;
+  line-height: 1.6;
+}
+
+.md-list-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.md-table-scroll {
+  width: 100%;
+  margin: 4rpx 0;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
+}
+
+.md-table {
+  display: inline-table;
+  table-layout: auto;
+  border: 2rpx solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.md-tr {
+  display: table-row;
+}
+
+.md-tr-head {
+  background-color: var(--bg-tertiary);
+  border-bottom: 2rpx solid var(--border);
+}
+
+.md-tr-alt {
+  background-color: var(--bg-secondary);
+}
+
+.md-th,
+.md-td {
+  display: table-cell;
+  padding: 14rpx 20rpx;
+  font-size: 26rpx;
+  line-height: 1.45;
+  border-right: 2rpx solid var(--border-light);
+  border-bottom: 2rpx solid var(--border-light);
+  min-width: 180rpx;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+.md-th:last-child,
+.md-td:last-child {
+  border-right: none;
+}
+
+.md-tr:last-child .md-td {
+  border-bottom: none;
+}
+
+.md-th {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.md-td {
+  color: var(--text-secondary);
+}
+
+.md-code-block {
+  background-color: #1e293b;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  overflow-x: auto;
+  margin: 4rpx 0;
+}
+
+.md-code-content {
+  display: block;
+  font-family: SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 24rpx;
+  line-height: 1.55;
+  color: #e2e8f0;
+  white-space: pre;
+}
+
+.md-hr {
+  height: 2rpx;
+  background-color: var(--border);
+  margin: 12rpx 0;
+  border: none;
+}
+
+/* ─── 图片（知识库「相关图示」/ 活动详情等运营内容插图） ─── */
+.md-image-box {
+  width: 100%;
+  height: 400rpx;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.md-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* imageMode="full"：运营内容（活动详情等）全宽自适应大图，不设限高 */
+/* widthFix 时图宽=容器宽、高度自适应，父框需放开固定高度 */
+.md-image-box-full {
+  height: auto;
+}
+
+.md-image-box-full .md-image {
+  height: auto;
+}
+
+/* ─── 图组（连续多图 → 2 列网格缩略图 + 图题） ───
+ * ponytail: 一格一图一题，灰底衬托；图题最多 2 行截断，保证同行两格高度整齐
+ */
+.md-img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.md-img-cell {
+  width: calc(50% - 8rpx);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.md-img-thumb {
+  width: 100%;
+  height: 240rpx;
+}
+
+/* imageMode="full"：图组每格也放宽为自适应高（widthFix），定义在 .md-img-thumb 之后以覆盖限高 */
+.md-img-thumb-full {
+  height: auto;
+}
+
+.md-img-cap {
+  font-size: 20rpx;
+  line-height: 1.35;
+  color: var(--text-secondary);
+  padding: 8rpx 12rpx 10rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}

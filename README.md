@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/badge/Status-Live%20%26%20Operating-success?style=flat-square" alt="">
 <img src="https://img.shields.io/badge/Platform-WeChat%20%2F%20Douyin%20Mini%20Program-07C160?style=flat-square" alt="">
 <img src="https://img.shields.io/badge/AI-LangGraph%2015%20Nodes-blueviolet?style=flat-square" alt="">
-<img src="https://img.shields.io/badge/Knowledge%20Base-5M%2B%20Words-orange?style=flat-square" alt="">
+<img src="https://img.shields.io/badge/Knowledge%20Base-20M%2B%20Words-orange?style=flat-square" alt="">
 <img src="https://img.shields.io/badge/Business-CPS%20Commission-gold?style=flat-square" alt="">
 <img src="https://img.shields.io/badge/License-All%20Rights%20Reserved-lightgrey?style=flat-square" alt="">
 
@@ -54,7 +54,7 @@
 | 核心指标 | 说明 |
 |---|---|
 | 技术架构 | LangGraph 多智能体（15 节点）三层协同 |
-| 知识库 | 约 500 万字，覆盖国标到避坑经验 |
+| 知识库 | 约 2000 万字，覆盖国标到避坑经验 |
 | 检索召回 | SQL + 向量 + BM25 三路并行召回 + Rerank 精排 |
 | 幻觉控制 | 代码快速校验（零 LLM 成本）+ LLM 深度检查，引用 100% 可溯源 |
 | 商业模式 | 成交佣金（约 5%）+ 用户返现（约 1%，凭证核验）|
@@ -232,6 +232,30 @@ flowchart TB
 | 检索 | 自建 SAG 知识库 · 向量 KNN + BM25 + 结构化 SQL 三路召回 |
 | 基础设施 | 腾讯云（COS / 位置服务 / SMS）· Nginx · 云托管 |
 
+### MCP 开放入口：接住通用 AI 的流量
+
+平台已将核心能力封装为 **MCP Server**（Model Context Protocol 开放协议），豆包、WorkBuddy 等主流 AI 应用可直接调用 —— **通用 AI 负责流量入口，构窗负责专业供给**：
+
+```mermaid
+flowchart LR
+    subgraph T["通用 AI 应用 · 流量入口"]
+        D["豆包"]
+        W["WorkBuddy 等 Agent 应用"]
+    end
+    subgraph GC["构窗 MCP Server · 专业能力"]
+        K["SAG 知识检索（2000 万字）"]
+        P["产品匹配 · 方案生成"]
+        M["本地商家匹配"]
+    end
+    U["门窗用户"]
+    T -->|"MCP 协议调用"| GC
+    GC -->|"可溯源的专业回答 + 真实商家转化"| U
+```
+
+- **不与通用 AI 竞争，而是互补**：豆包们有海量用户与对话入口，但缺门窗行业的深度知识库与真实商家网络；构窗恰好相反 —— 有 2000 万字垂直知识库、真商家与成交闭环，缺流量入口。MCP 让两者各取所长，构窗不获客也能站在流量入口
+- **零成本承接细分流量**：用户在豆包里问「断桥铝怎么选」，通用大模型通过 MCP 调用构窗的专业能力，返回有知识库依据、可溯源、能落到真实商家的回答 —— 通用 AI 的回答质量变强，构窗顺势承接专业细分赛道的转化
+- **能力即入口**：知识检索、产品匹配、方案生成、商家匹配全部开放，任何支持 MCP 的 AI 应用接入即用，构窗成为门窗垂直领域的「专业大脑」
+
 ## 九、商业模式
 
 ### 收入结构
@@ -275,6 +299,7 @@ flowchart LR
 |---|---|---|
 | MVP | ✅ 已完成 | 基础对话 + 知识科普 + 简单推荐 |
 | V1.0（当前） | ✅ 已上线 | 完整导购 + 产品推荐 + 方案生成 + 商家匹配 + 幻觉控制；拍照看效果、评价体系已上线 |
+| MCP 入口 | ✅ 已上线 | 核心能力封装为 MCP Server，可被豆包 / WorkBuddy 等 AI 应用调用，承接通用 AI 流量 |
 | V2.0 | 规划中 | 多模态深化 + 智能量尺 + 供应链对接 |
 | V3.0 | 规划中 | 安装监管 + 线上交易 + 招投标 |
 | V4.0 | 愿景 | 行业平台化，向建材、家装、维修等相邻品类扩展 |
